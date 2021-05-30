@@ -12,6 +12,11 @@
 This application generates API's for data absorption on the part of users.
 With these API's you may:
 
+## - Tecnologies
+    - Laravel
+    - PHP
+    - Composer
+
 ## - Users:
     - Get all users.
     - Get user by ID.

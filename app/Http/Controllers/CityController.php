@@ -56,10 +56,23 @@ class CityController extends Controller
 
     public function countCity()
     {
-        $cities = City::query()->orderBy("name")->distinct()->get();
+        $cities = City::query()->select("name")->orderBy("name")->distinct()->get();
 
         foreach ($cities as $city) {
             $count[$city->name] = User::query()
+            ->join("cities", "cities.id", 'users.city')
+            ->count();
+        }
+
+        return response()->json($count);
+    }
+
+    public function countState()
+    {
+        $cities = City::query()->select("state")->orderBy("state")->distinct()->get();
+
+        foreach ($cities as $city) {
+            $count[$city->state] = User::query()
             ->join("cities", "cities.id", 'users.city')
             ->count();
         }

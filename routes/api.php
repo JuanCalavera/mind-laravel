@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('address')->group(function () {
     Route::get('/', [AddressController::class, "index"]);
-    Route::post('/add', [AddressController::class, "store"]);
+    Route::post('/addaddress', [AddressController::class, "store"]);
     Route::put('/{id}/update', [AddressController::class, "update"]);
     Route::get('/{id}', [AddressController::class, "show"]);
     Route::delete('/delete/{id}', [AddressController::class, "destroy"]);
@@ -31,14 +31,6 @@ Route::prefix('city')->group(function () {
     Route::put('/{id}/update', [CityController::class, "update"]);
     Route::get('/{id}', [CityController::class, "show"]);
     Route::delete('/delete/{id}', [CityController::class, "destroy"]);
-});
-
-Route::prefix('state')->group(function () {
-    Route::get('/', [StateController::class, "index"]);
-    Route::post('/add', [StateController::class, "store"]);
-    Route::put('/{id}/update', [StateController::class, "update"]);
-    Route::get('/{id}', [StateController::class, "show"]);
-    Route::delete('/delete/{id}', [StateController::class, "destroy"]);
 });
 
 Route::prefix('count')->group(function () {

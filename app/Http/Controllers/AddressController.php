@@ -14,15 +14,25 @@ class AddressController extends Controller
      */
     public function index()
     {
-        $addresses = Address::query()->orderBy("name")->get();
+        $addresses = Address::query()
+            ->join("cities", "cities.id,", "=", "addresses.city_id")
+            ->get();
+
         return response()->json($addresses);
     }
 
     public function store(Request $request)
     {
+
+        // response()->json([1, 2]);
+
         $request->validate([
-            "name" => "required",
+            "street" => "required",
             "number" => "required",
+            "neighbor" => "required",
+            "zip_code" => "required",
+            "city_id" => "required",
+            "user_id" => "required",
         ]);
 
         $address = Address::create($request->all());
@@ -33,9 +43,13 @@ class AddressController extends Controller
     public function update(Request $request, $id)
     {
         $address = Address::find($id);
-        $address->name = $request->name ? $request->name : $address->name;
+        $address->street = $request->street ? $request->street : $address->street;
         $address->number = $request->number ? $request->number : $address->number;
         $address->complement = $request->complement ? $request->complement : $address->complement;
+        $address->neighbor = $request->neighbor ? $request->neighbor : $address->neighbor;
+        $address->zip_code = $request->zip_code ? $request->zip_code : $address->zip_code;
+        $address->city_id = $request->city_id ? $request->city_id : $address->city_id;
+        $address->user_id = $request->user_id ? $request->user_id : $address->user_id;
 
 
         if ($address->save()) {
@@ -51,7 +65,11 @@ class AddressController extends Controller
      */
     public function show(int $id)
     {
-        $address = Address::query()->orderBy("name")->where('id', $id)->get();
+        $address = Address::query()
+            ->orderBy("street")
+            ->where('addresses.id', $id)
+            ->join("cities", "cities.id,", "=", "addresses.city_id")
+            ->get();
 
         return response()->json($address);
     }
@@ -62,5 +80,4 @@ class AddressController extends Controller
 
         return response()->json(["message" => "Address id: " . $id . " remove"]);
     }
-
 }

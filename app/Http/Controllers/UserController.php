@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Mind;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -15,7 +15,14 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response()->json(User::query()->orderBy("name")->get());
+        $users = DB::table("users")
+            ->join("cities", "users.city", "=", "cities.id")
+            ->join("states", "users.state", "=", "states.id")
+            ->join("addresses", "users.address", "=", "addresses.id")
+            ->select('users.*', 'cities.name as city', 'states.name as state', 'addresses.name as address', 'addresses.number as address_number', 'addresses.complement as address_complement')
+            ->get();
+
+        return response()->json($users);
     }
 
     /**
@@ -45,7 +52,15 @@ class UserController extends Controller
      */
     public function show(int $id)
     {
-        $user = User::query()->where('id', $id)->get();
+        
+        $user = DB::table("users")
+            ->join("cities", "users.city", "=", "cities.id")
+            ->join("states", "users.state", "=", "states.id")
+            ->join("addresses", "users.address", "=", "addresses.id")
+            ->where('users.id', $id)
+            ->select('users.*', 'cities.name as city', 'states.name as state', 'addresses.name as address', 'addresses.number as address_number', 'addresses.complement as address_complement')
+            ->get();
+
 
         return response()->json($user);
     }
@@ -81,6 +96,6 @@ class UserController extends Controller
     {
         User::destroy($id);
 
-        return response()->json(["message" => "User id " . $id . " remove"]);
+        return response()->json(["message" => "User id: " . $id . " remove"]);
     }
 }

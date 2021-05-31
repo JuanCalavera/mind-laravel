@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -14,8 +15,19 @@ class CityController extends Controller
      */
     public function index()
     {
-        $users = User::query()->select("city")->orderBy("city")->get();
-        return response()->json($users);
+        $cities = City::query()->orderBy("name")->get();
+        return response()->json($cities);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            "name" => "required",
+        ]);
+
+        $city = City::create($request->all());
+
+        return response()->json($city);
     }
 
     /**
@@ -26,19 +38,39 @@ class CityController extends Controller
      */
     public function show(int $id)
     {
-        $user = User::query()->select("City")->where('id', $id)->get();
+        $city = City::query()->orderBy("name")->where('id', $id)->get();
 
-        return response()->json($user);
+        return response()->json($city);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $city = City::find($id);
+        $city->name = $request->name ? $request->name : $city->name;
+
+
+        if ($city->save()) {
+            return response()->json("City " . $request->name . "edited!");
+        }
     }
 
     public function countCity()
     {
-        $cities = User::query()->select("city")->orderBy("city")->distinct()->get();
+        $cities = City::query()->orderBy("name")->distinct()->get();
 
         foreach ($cities as $city) {
-            $count[$city->city] = User::query()->where("city", $city->city)->count();
+            $count[$city->name] = User::query()
+            ->join("cities", "cities.id", 'users.city')
+            ->count();
         }
 
         return response()->json($count);
+    }
+
+    public function destroy(int $id)
+    {
+        City::destroy($id);
+
+        return response()->json(["message" => "City id: " . $id . " remove"]);
     }
 }
